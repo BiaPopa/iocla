@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include "pixel.h"
+#define GET_PIXEL(a, i, j) (*(*(a + i) + j))
 
 /*
 	TODO a
@@ -13,7 +14,18 @@
 	linia n - 1, etc.
 */
 
-void reversePic(Picture *pic);
+void reversePic(Picture *pic)
+{
+	Pixel *arr = malloc(pic->width * sizeof(struct Pixel));
+
+	for (int i = 0; i < pic->height/2; ++i) {
+		memcpy(arr, *(pic->pix_array + i), pic->width * sizeof(struct Pixel));
+		memcpy(*(pic->pix_array + i), *(pic->pix_array + pic->height - i - 1), pic->width * sizeof(struct Pixel));
+		memcpy(*(pic->pix_array + pic->height - i - 1), arr, pic->width * sizeof(struct Pixel));
+	}
+
+	free(arr);
+}
 
 /*
 	TODO b
@@ -25,7 +37,14 @@ void reversePic(Picture *pic);
 	p.b = 0.11 * p.b;
 */
 
-void colorToGray(Picture *pic);
+void colorToGray(Picture *pic){
+	for (int i = 0; i < pic->height; ++i)
+		for (int j = 0; j < pic->width; ++j){
+			GET_PIXEL(pic->pix_array, i, j).R *= 0.3;
+			GET_PIXEL(pic->pix_array, i, j).G *= 0.59;
+			GET_PIXEL(pic->pix_array, i, j).B *= 0.11;
+		}
+}
 
 /*
 	Structura unui pixel, cea a unei imagini, precum si generarea acestora
@@ -43,6 +62,14 @@ int main() {
 	Pixel **pix_array = generatePixelArray(height, width);
 	Picture *pic = generatePicture(height, width, pix_array);
 
+	printPicture(pic);
+
+	printf("\n");
+	reversePic(pic);
+	printPicture(pic);
+
+	printf("\n");
+	colorToGray(pic);
 	printPicture(pic);
 
 	freePicture(&pic);
