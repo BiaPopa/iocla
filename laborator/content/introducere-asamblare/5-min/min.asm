@@ -9,6 +9,13 @@ main:
     mov eax, 4
     mov ebx, 1
     ; TODO: aflati minimul
-    PRINTF32 `%d\n\x0`, eax ; afiseaza minimul
+    cmp eax, ebx
+    jns swap
 
+print:
+    PRINTF32 `%d\n\x0`, eax ; afiseaza minimul
     ret
+
+swap:
+    xchg eax, ebx
+    jmp print
